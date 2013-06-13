@@ -13,7 +13,7 @@ REQUIRED_MIMES=("gif" "png" "jpg" "jpeg" "flv" "mp3" "macromedia" "text" "gzip")
 
 OPEN_BROWSER="0"
 
-debug "browse feed is disabled"
+debug "open browser $OPEN_BROWSER"
 
 
 function openbrowser(){
@@ -159,8 +159,6 @@ if [ $OPEN_BROWSER == "1" ]; then
   openbrowser
 fi
 
-debug "browse feed is disabled"
+debug "open browser $OPEN_BROWSER"
 
 exit 0;
- 
- 
