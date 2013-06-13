@@ -53,3 +53,4 @@ if set to "1" chromeium opens a html file showing extracted images
 
 
 cheers have fun
+$ bash run.sh
