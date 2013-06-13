@@ -13,8 +13,6 @@ REQUIRED_MIMES=("gif" "png" "jpg" "jpeg" "flv" "mp3" "macromedia" "text" "gzip")
 
 OPEN_BROWSER="0"
 
-debug "open browser $OPEN_BROWSER"
-
 
 function openbrowser(){
 
@@ -71,19 +69,28 @@ function debug(){
 
 function newhash () {
 
+    IFS=$'\n';
+
     local dirname=$1
 
     cd $dirname;
 
     echo $dirname;
 
-    x=$(file $(ls ) | egrep  -i "data|image|audio|png|jpeg|gif");
+    x=$(file $(ls ) | egrep  -i "image|audio|png|jpeg|gif"| tr '[:upper:]' '[:lower:]');
 
+    done=( $(cat "$WORKING_DIR/cache-reverse/feed/done.txt") );
 
     for f in  $x; do
 
 
+
+    if [ $(contains "${done[@]}" "$f") == "n" ]; then
+
     IFS=$'\n';
+
+    echo $f >> $WORKING_DIR/cache-reverse/feed/done.txt;
+
 
     IN=$(echo $f | tr "[]{}/, " "_");
 
@@ -94,15 +101,17 @@ function newhash () {
     IN2="${Array[1]}"
     set -- "$IN2"
     IFS="_"; declare -a ArrayMime=($*)
-    mime=$(echo ${ArrayMime[4]} | tr '[:upper:]' '[:lower:]')
+    mime=$(echo ${ArrayMime[1]} )
 
-    IFS=$'\n';
 
 
 
     debug "mime $mime file ${Array[@]}"
 
     if [ $(contains "${REQUIRED_MIMES[@]}" "$mime") == "y" ]; then
+
+      IFS=$'\n';
+
       mimex=$(echo $mime | sed  's/macromedia/flv/'| sed 's/text/html/')
 
 
@@ -126,15 +135,19 @@ function newhash () {
     fi
 
 
+ fi
 
     done
 
 }
 
+debug "open browser $OPEN_BROWSER"
+
 
 if [ ! -d $WORKING_DIR/cache-reverse/feed ]; then
   debug "making dir  $WORKING_DIR/cache-reverse/feed"
   mkdir -p $WORKING_DIR/cache-reverse/feed
+  echo "">$WORKING_DIR/cache-reverse/feed/done.txt
   debug "created $WORKING_DIR/cache-reverse/feed"
 
 fi
