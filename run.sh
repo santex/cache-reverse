@@ -3,7 +3,7 @@
 
 IFS=$'\n';
 
-DEBUG="0"
+DEBUG="1"
 
 WORKING_DIR="/tmp"
 
@@ -68,7 +68,7 @@ function newhash () {
     IN2="${Array[1]}"
     set -- "$IN2"
     IFS="_"; declare -a ArrayMime=($*)
-    mime=$(echo ${ArrayMime[1]} | tr '[:upper:]' '[:lower:]')
+    mime=$(echo ${ArrayMime[4]} | tr '[:upper:]' '[:lower:]')
 
     IFS=$'\n';
 
@@ -78,7 +78,13 @@ function newhash () {
 
     if [ $(contains "${REQUIRED_MIMES[@]}" "$mime") == "y" ]; then
       mimex=$(echo $mime | sed  's/macromedia/flv/'| sed 's/text/html/')
-      cp "$dirname/${Array[0]}" "$WORKING_DIR/cache-reverse/feed/${Array[1]}.$mimex"
+
+
+      if [ "$mime" == "gzip" ]; then
+        zcat "$dirname/${Array[0]}" > "$WORKING_DIR/cache-reverse/feed/${Array[1]}.html"
+      else
+        cp "$dirname/${Array[0]}" "$WORKING_DIR/cache-reverse/feed/${Array[1]}.$mimex"
+      fi
 
 
     fi
