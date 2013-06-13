@@ -5,9 +5,35 @@ IFS=$'\n';
 
 DEBUG="1"
 
+HOME_DIR=`pwd`
+
 WORKING_DIR="/tmp"
 
 REQUIRED_MIMES=("gif" "png" "jpg" "jpeg" "flv" "mp3" "macromedia" "text" "gzip")
+
+OPEN_BROWSER="0"
+
+debug "browse feed is disabled"
+
+
+function openbrowser(){
+
+
+
+dir=$WORKING_DIR/cache-reverse/feed/;
+cd $dir;
+var=$(echo "var photos=["; for i in `ls . | egrep "jpg|gif|png" |  sort `; do echo '"'$dir/$i'",\n'; done; echo '""]'; );
+
+cp $HOME_DIR/feed.html  $WORKING_DIR/cache-reverse/feed/;
+echo -e $var >  $WORKING_DIR/cache-reverse/feed/photos.js;
+echo ";" >> $WORKING_DIR/cache-reverse/feed/photos.js;
+chromium  $WORKING_DIR/cache-reverse/feed/feed.html &
+
+
+
+}
+
+
 
 function contains() {
     local n=$#
@@ -80,8 +106,18 @@ function newhash () {
       mimex=$(echo $mime | sed  's/macromedia/flv/'| sed 's/text/html/')
 
 
+
       if [ "$mime" == "gzip" ]; then
-        zcat "$dirname/${Array[0]}" > "$WORKING_DIR/cache-reverse/feed/${Array[1]}.html"
+
+        FILE_NAME="$WORKING_DIR/cache-reverse/feed/${Array[1]}"
+        zcat "$dirname/${Array[0]}" > $FILE_NAME
+#        xmimer=$(file --mime-type $FILE_NAME | awk '{print $2}');
+
+#        if [ "$xmimer" == "text/html" ]; then
+#        html2text $FILE_NAME > $FILE_NAME.txt;
+#        cat $FILE_NAME | data-freq --limit 100;
+#        fi
+
       else
         cp "$dirname/${Array[0]}" "$WORKING_DIR/cache-reverse/feed/${Array[1]}.$mimex"
       fi
@@ -100,6 +136,7 @@ if [ ! -d $WORKING_DIR/cache-reverse/feed ]; then
   debug "making dir  $WORKING_DIR/cache-reverse/feed"
   mkdir -p $WORKING_DIR/cache-reverse/feed
   debug "created $WORKING_DIR/cache-reverse/feed"
+
 fi
 
 
@@ -115,5 +152,13 @@ for i in Cache Media\ Cache; do
       debug "checked  $WORKING_DIR/cache-reverse/$i"
    fi
 done
+
+
+
+if [ $OPEN_BROWSER == "1" ]; then
+  openbrowser
+fi
+
+debug "browse feed is disabled"
 
 exit 0;
