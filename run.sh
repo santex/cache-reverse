@@ -7,7 +7,7 @@ DEBUG="1"
 
 WORKING_DIR="/tmp"
 
-REQUIRED_MIMES=("gif" "png" "jpg" "jpeg" "flv" "mp3" "macromedia" "text" "data" "txt" "html" "text")
+REQUIRED_MIMES=("gif" "png" "jpg" "jpeg" "flv" "mp3" "macromedia" "text" "gzip")
 
 function contains() {
     local n=$#
